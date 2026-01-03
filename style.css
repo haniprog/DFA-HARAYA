@@ -1,4 +1,4 @@
-/* GENERAL */
+/* ================= GENERAL ================= */
 body {
     margin: 0;
     font-family: 'Judson', serif;
@@ -6,7 +6,7 @@ body {
     color: #7a2e44;
 }
 
-/* PAGE HANDLING */
+/* ================= PAGE HANDLING ================= */
 .page {
     display: none;
     min-height: 100vh;
@@ -17,7 +17,7 @@ body {
     display: block;
 }
 
-/* NAVBAR */
+/* ================= NAVBAR ================= */
 .navbar {
     display: flex;
     justify-content: space-between; /* pushes items left & right */
@@ -28,9 +28,8 @@ body {
 
 .about-btn {
     position: relative;
-    z-index: 10;   /* brings it to the top */
+    z-index: 10; 
     pointer-events: auto;
-
     font-family: 'Alata', sans-serif;
     background-color: #c35b78;
     color: white;
@@ -44,7 +43,6 @@ body {
 .about-btn:hover {
     background-color: #a94763;
 }
-
 
 .logo {
     display: flex;
@@ -69,23 +67,38 @@ body {
     font-size: 13px;
 }
 
-
-/* BUTTONS */
+/* ================= BUTTONS ================= */
 button {
     font-family: 'Alata', sans-serif;
-    background-color: #c44d6d;
-    color: white;
     border: none;
-    padding: 10px 20px;
     border-radius: 6px;
     cursor: pointer;
+    padding: 10px 20px;
+    font-size: 14px;
+    transition: opacity 0.2s;
 }
 
 button:hover {
     opacity: 0.9;
 }
 
-/* CONTENT */
+/* Color-coded buttons */
+.analyze-btn {
+    background-color: #c44d6d; /* pink */
+    color: white;
+}
+
+.speak-btn {
+    background-color: #610027; /* dark pink */
+    color: white;
+}
+
+.clear-btn {
+    background-color: #95a5a6; /* gray */
+    color: white;
+}
+
+/* ================= CONTENT ================= */
 .content {
     display: flex;
     gap: 40px;
@@ -99,7 +112,7 @@ button:hover {
     width: 50%;
 }
 
-/* INPUT */
+/* ================= INPUT ================= */
 textarea {
     width: 95%;
     height: 150px;
@@ -110,12 +123,19 @@ textarea {
     margin-top: 10px;
 }
 
-.analyze-btn {
+/* ================= BUTTON GROUP ================= */
+.button-group {
     margin-top: 15px;
-    float: right;
+    display: flex;
+    gap: 10px; /* space between buttons */
+    justify-content: flex-start; /* aligns buttons left */
 }
 
-/* RESPONSE */
+.button-group button {
+    flex: 0; /* button width fits content */
+}
+
+/* ================= RESPONSE ================= */
 .response-box {
     background-color: #f5c2d0;
     padding: 15px;
@@ -128,7 +148,7 @@ textarea {
     font-size: 16px;
 }
 
-/* ABOUT PAGE */
+/* ================= ABOUT PAGE ================= */
 #about h2 {
     font-size: 32px;
 }
@@ -144,5 +164,3 @@ textarea {
     margin-top: 20px;
     float: right;
 }
-
-
