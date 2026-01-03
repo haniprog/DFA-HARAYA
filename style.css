@@ -82,10 +82,30 @@ button:hover {
     opacity: 0.9;
 }
 
+button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
 /* Color-coded buttons */
 .analyze-btn {
     background-color: #c44d6d; /* pink */
     color: white;
+    position: relative;
+    z-index: 5;
+    pointer-events: auto;
+}
+
+/* Visual debug when pointerdown occurs */
+.analyze-btn.debug-active {
+    outline: 2px solid #ffebee;
+    transform: scale(0.98);
+}
+
+/* Make focus visible */
+.analyze-btn:focus {
+    outline: 3px solid rgba(255,255,255,0.25);
 }
 
 .speak-btn {
@@ -149,18 +169,97 @@ textarea {
 }
 
 /* ================= ABOUT PAGE ================= */
-#about h2 {
-    font-size: 32px;
+#about {
+    position: fixed;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0,0,0,0.28);
+    z-index: 60;
+    padding: 24px;
+}
+#about.active {
+    display: flex;
+}
+
+.about-overlay {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .about-box {
+    position: relative;
     background-color: #fff3f6;
-    padding: 30px;
-    border-radius: 15px;
-    margin-top: 20px;
+    padding: 20px;
+    border-radius: 12px;
+    max-width: 720px;
+    width: 100%;
+    max-height: calc(80vh - 80px);
+    overflow-y: auto;
+    box-shadow: 0 12px 34px rgba(0,0,0,0.18);
+    transform: translateY(-12px);
+    opacity: 0;
+    transition: transform .22s ease, opacity .22s ease;
+}
+
+/* Make about content more compact and add scrolling styles */
+.about-box h2 { font-size: 22px; margin-top: 0; }
+.about-box p { font-size: 14px; color: #5e2332; line-height: 1.45; margin-bottom: 10px; }
+
+/* Custom scrollbar for WebKit */
+.about-box::-webkit-scrollbar { width: 10px; }
+.about-box::-webkit-scrollbar-thumb { background: rgba(169,65,89,0.35); border-radius: 8px; }
+.about-box::-webkit-scrollbar-track { background: rgba(0,0,0,0.02); border-radius: 8px; }
+
+/* Firefox scrollbar colors */
+.about-box { scrollbar-width: thin; scrollbar-color: rgba(169,65,89,0.35) rgba(0,0,0,0.02); }
+
+@media (max-width: 520px) {
+    .about-box { padding: 16px; max-width: 480px; }
+    .about-box p { font-size: 13px; }
+    .about-close { top: 8px; right: 8px; }
+}
+
+#about.active .about-box {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.about-close {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: transparent;
+    border: none;
+    font-size: 20px;
+    line-height: 1;
+    cursor: pointer;
+    color: #7a2e44;
+    padding: 6px;
+    border-radius: 6px;
+}
+.about-close:hover {
+    background: rgba(196,75,105,0.08);
+}
+.about-close:focus {
+    outline: 2px solid rgba(196,75,105,0.18);
+}
+
+.about-box h2 {
+    margin-top: 0;
+    font-size: 28px;
+}
+
+.about-box p {
+    margin-bottom: 12px;
+    color: #5e2332;
+    line-height: 1.5;
 }
 
 .exit-btn {
-    margin-top: 20px;
+    margin-top: 12px;
     float: right;
 }

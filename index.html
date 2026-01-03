@@ -35,7 +35,7 @@
             <textarea placeholder="Type your experience here..."></textarea>
 
             <button class="speak-btn">🎤 Speak</button>
-            <button class="analyze-btn">Analyze</button>
+            <button type="button" class="analyze-btn">Analyze</button>
             <button class="clear-btn">Clear</button>
 
         </div>
@@ -58,20 +58,24 @@
 
 <!-- ================= ABOUT PAGE ================= -->
 <section id="about" class="page">
-
-    <h2>About</h2>
-
-    <div class="about-box">
-        <p>
-            HARAYA is a DFA-based Women Harassment Pattern Detection and Response System.
-            Inspired by the Tagalog word “hiraya” meaning vision or aspiration, the system
-            aims to empower women by recognizing early warning signs of harassment and
-            providing actionable responses before situations escalate.
-        </p>
+    <div class="about-overlay">
+        <div class="about-box">
+            <button class="about-close" aria-label="Close" title="Close">✕</button>
+            <h2>About</h2>
+            <p>
+                In everyday situations — commuting in public transport, walking through crowded corridors, or even engaging in online conversations — women frequently encounter subtle and explicit forms of harassment that often go unnoticed or unaddressed. These experiences, although sometimes dismissed as “normal,” can create long-lasting emotional distress and a persistent sense of vulnerability. The inability to recognize early signs of harassment, especially when they appear gradually or in disguised patterns, leaves many women without the confidence or means to respond effectively. This project begins with this reality: a common yet deeply concerning issue that continues to affect women across different sectors of Philippine society.
+            </p>
+            <p>
+                Recent discussions on women's empowerment emphasize not only the importance of protecting women but also equipping them with tools that validate their experiences and support informed decision-making. Many technological solutions exist, but few are explicitly designed to detect harassment as a sequence of patterned behaviors. This gap highlights the need for a system that is both practical and grounded in computational logic — one that analyzes input interactions, identifies potentially harmful sequences, and provides helpful responses. Using Deterministic Finite Automata (DFA), the system is made to interpret harassment as a recognizable pattern rather than random events, making the detection more structured, logical, and accessible.
+            </p>
+            <p>
+                The name HARAYA, the old Tagalog variant of the word “hiraya” and derived from the Filipino word meaning “vision, imagination, or aspiration”, reflects the core purpose of this system. Just as HARAYA represents the creative envisioning of one’s hopes and dreams, this system envisions a safer environment where women can confidently navigate daily life without fear of harassment. By detecting harassment patterns early and providing clear, actionable responses, HARAYA empowers women to take control of their safety. The name symbolizes the project’s goal of transforming the aspiration for security and confidence into a practical, technology-assisted reality — where every woman can feel recognized, validated, and supported in her experiences.
+            </p>
+            <div style="text-align:right;margin-top:12px;">
+                <button class="exit-btn" onclick="showHome()">Exit</button>
+            </div>
+        </div>
     </div>
-
-    <button class="exit-btn" onclick="showHome()">Exit</button>
-
 </section>
 
 
