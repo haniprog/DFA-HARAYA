@@ -1,10 +1,10 @@
 /* ===== CONSTANTS ===== */
 const NEGATIONS = ["not", "didnt", "didn't", "never", "no"];
 const PHYSICAL_ACTIONS = [
-    "touch","touched","hit","hitten","punch","punched","slap","slapped",
+    "touch","touched","hit","hits","punch","punched","slap","slapped",
     "kick","kicked","push","pushed","pull","pulled","grab","grabbed",
     "choke","choked","assault","assaulted","block","blocked",
-    "hawakan","pahipo","sinapak","sinuntok"
+    "hawakan","pahipo","hinipuan","sinapak","sinuntok"
 ];
 const VERBAL_ACTIONS = [
     "follow","followed","stare","staring","stared","catcall","catcalled",
@@ -17,6 +17,11 @@ const FEAR_WORDS = [
 ];
 
 /* ===== PREPROCESSOR ===== */
+// Helper: match tokens against action lists and handle simple inflections
+function tokenMatchesList(token, list) {
+    return list.some(action => token === action || token.startsWith(action));
+}
+
 function preprocessInput(text) {
     const rawTokens = text
         .toLowerCase()
@@ -27,9 +32,9 @@ function preprocessInput(text) {
 
     for (let i = 0; i < rawTokens.length; i++) {
         const word = rawTokens[i];
-        // Skip physical actions if negated
+        // Skip physical actions if negated (handles inflected forms like "touching")
         if (
-            PHYSICAL_ACTIONS.includes(word) &&
+            tokenMatchesList(word, PHYSICAL_ACTIONS) &&
             i > 0 &&
             NEGATIONS.includes(rawTokens[i - 1])
         ) continue;
@@ -43,10 +48,11 @@ function preprocessInput(text) {
 function analyzeTokens(tokens) {
     let flags = { physical: false, verbal: false, fear: false };
     tokens.forEach(word => {
-        if (PHYSICAL_ACTIONS.includes(word)) flags.physical = true;
-        if (VERBAL_ACTIONS.includes(word)) flags.verbal = true;
-        if (FEAR_WORDS.includes(word)) flags.fear = true;
+        if (tokenMatchesList(word, PHYSICAL_ACTIONS)) flags.physical = true;
+        if (tokenMatchesList(word, VERBAL_ACTIONS)) flags.verbal = true;
+        if (tokenMatchesList(word, FEAR_WORDS)) flags.fear = true;
     });
+    console.log('analyzeTokens ->', { tokens, flags });
     return flags;
 }
 
@@ -92,19 +98,99 @@ function getResponse(category) {
     };
 }
 
+/* ===== PAGE NAVIGATION ===== */
+function showHome() {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    const home = document.getElementById('home');
+    if (home) home.classList.add('active');
+}
+
+function showAbout() {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    const about = document.getElementById('about');
+    if (about) about.classList.add('active');
+}
+
+window.showHome = showHome;
+window.showAbout = showAbout;
+
 /* ===== UI CONNECTION ===== */
 document.addEventListener("DOMContentLoaded", () => {
     const analyzeBtn = document.querySelector(".analyze-btn");
     const speakBtn = document.querySelector(".speak-btn");
     const clearBtn = document.querySelector(".clear-btn");
+    const aboutBtn = document.querySelector(".about-btn");
+    const aboutClose = document.querySelector(".about-close");
+    const aboutOverlay = document.querySelector('.about-overlay');
     const textarea = document.querySelector("textarea");
     const classificationEl = document.querySelector(".classification");
     const actionList = document.querySelector(".right ul");
 
+    // Wire About button
+    if (aboutBtn) {
+        aboutBtn.addEventListener('click', showAbout);
+    }
+    if (aboutClose) {
+        aboutClose.addEventListener('click', showHome);
+    }
+    if (aboutOverlay) {
+        aboutOverlay.addEventListener('click', (e) => {
+            if (e.target === aboutOverlay) showHome();
+        });
+    }
+
     /* --- ANALYZE BUTTON --- */
-    analyzeBtn.addEventListener("click", () => {
-        processInput(textarea.value);
+    // Debug helper: log clicks to see where events land
+    document.addEventListener('click', (e) => {
+        console.log('Document click:', { x: e.clientX, y: e.clientY, target: e.target });
     });
+
+    if (analyzeBtn) {
+        analyzeBtn.style.pointerEvents = 'auto';
+        analyzeBtn.tabIndex = analyzeBtn.tabIndex || 0;
+
+        analyzeBtn.addEventListener("pointerdown", (e) => {
+            console.log('Analyze pointerdown', { target: e.target, elemAtPoint: document.elementFromPoint(e.clientX, e.clientY) });
+            analyzeBtn.classList.add('debug-active');
+            setTimeout(() => analyzeBtn.classList.remove('debug-active'), 200);
+        });
+
+        // Disable analyze button when there's no input; update on textarea changes
+        function updateAnalyzeState() {
+            const hasText = textarea.value && textarea.value.trim().length > 0;
+            analyzeBtn.disabled = !hasText;
+            if (hasText) {
+                analyzeBtn.classList.remove('disabled');
+            } else {
+                analyzeBtn.classList.add('disabled');
+            }
+        }
+
+        // initialize and listen for changes
+        updateAnalyzeState();
+        textarea.addEventListener('input', updateAnalyzeState);
+
+        analyzeBtn.addEventListener("click", () => {
+            const text = textarea.value.trim();
+            if (!text) {
+                console.log('Analyze clicked with empty input');
+                textarea.focus();
+                return;
+            }
+
+            console.log('Analyze clicked');
+            processInput(text);
+        });
+
+    } else {
+        console.warn("Analyze button not found at DOMContentLoaded; adding delegated handler.");
+        document.addEventListener("click", (e) => {
+            if (e.target && e.target.matches(".analyze-btn")) {
+                console.log('Delegated analyze click');
+                processInput(textarea.value);
+            }
+        });
+    }
 
     /* --- SPEECH-TO-TEXT BUTTON --- */
     speakBtn.addEventListener("click", () => {
