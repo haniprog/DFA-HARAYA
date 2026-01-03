@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>HARAYA</title>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Judson&family=Alata&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ================= HOME PAGE ================= -->
+<section id="home" class="page active">
+
+    <header class="navbar">
+    <div class="logo">
+        <img src="logo.png" alt="Haraya Logo" class="logo-img">
+        <div class="logo-text">
+            <h1>HARAYA</h1>
+            <p>DFA-Based Women’s Harassment Detection & Response System</p>
+        </div>
+    </div>
+
+        <button class="about-btn">About ▶</button>
+    </header>
+
+
+    <main class="content">
+        <div class="left">
+            <h2>Welcome to HARAYA!</h2>
+
+            <label>Describe what happened:</label>
+            <textarea placeholder="Type your experience here..."></textarea>
+
+            <button class="analyze-btn">Analyze</button>
+        </div>
+
+        <div class="right">
+            <h3>System Response:</h3>
+
+            <div class="response-box">
+                <p class="classification">⚠ Potential Harassment</p>
+            </div>
+
+            <h4>Recommended Actions:</h4>
+            <ul>
+                <li>Seek help.</li>
+                <li>Report to authorities.</li>
+            </ul>
+        </div>
+    </main>
+</section>
+
+<!-- ================= ABOUT PAGE ================= -->
+<section id="about" class="page">
+
+    <h2>About</h2>
+
+    <div class="about-box">
+        <p>
+            HARAYA is a DFA-based Women Harassment Pattern Detection and Response System.
+            Inspired by the Tagalog word “hiraya” meaning vision or aspiration, the system
+            aims to empower women by recognizing early warning signs of harassment and
+            providing actionable responses before situations escalate.
+        </p>
+    </div>
+
+    <button class="exit-btn" onclick="showHome()">Exit</button>
+
+</section>
+
+
+<!-- ================= SCRIPT ================= -->
+<script>
+/* =====================================================
+   CONSTANTS
+===================================================== */
+const NEGATIONS = ["not", "didnt", "didn't", "never", "no"];
+
+// Physical harassment words (IMMEDIATE HARASSMENT)
+const PHYSICAL_ACTIONS = [
+    "touch", "touched",
+    "hit", "hitten", "punch", "punched",
+    "slap", "slapped",
+    "kick", "kicked",
+    "push", "pushed",
+    "pull", "pulled",
+    "grab", "grabbed",
+    "choke", "choked",
+    "assault", "assaulted",
+    "hawakan", "pahipo", "sinapak", "sinuntok"
+];
+
+// Potential harassment (behavioral / verbal)
+const VERBAL_ACTIONS = [
+    "follow", "followed",
+    "stare", "staring", "stared",
+    "catcall", "catcalled",
+    "approach", "approached",
+    "whistle", "whistled",
+    "comment", "commented",
+    "block", "blocked",
+    "harass", "harassed"
+];
+
+// Fear / discomfort indicators
+const FEAR_WORDS = [
+    "scared", "afraid", "uncomfortable",
+    "unsafe", "anxious", "terrified",
+    "nervous", "panic", "panicked"
+];
+
+/* =====================================================
+   PREPROCESSOR (NEGATION AWARE)
+===================================================== */
+function preprocessInput(text) {
+    const raw = text
+        .toLowerCase()
+        .replace(/[^\w\s]/g, "")
+        .split(/\s+/);
+
+    let tokens = [];
+
+    for (let i = 0; i < raw.length; i++) {
+        const word = raw[i];
+
+        // Skip negated physical actions
+        if (
+            PHYSICAL_ACTIONS.includes(word) &&
+            i > 0 &&
+            NEGATIONS.includes(raw[i - 1])
+        ) {
+            continue;
+        }
+
+        tokens.push(word);
+    }
+
+    return tokens;
+}
+
+/* =====================================================
+   DFA-BASED ANALYSIS (SIMPLIFIED BUT CORRECT)
+===================================================== */
+function analyzeTokens(tokens) {
+    let flags = {
+        physical: false,
+        verbal: false,
+        fear: false
+    };
+
+    tokens.forEach(word => {
+        if (PHYSICAL_ACTIONS.includes(word)) {
+            flags.physical = true;
+        }
+        if (VERBAL_ACTIONS.includes(word)) {
+            flags.verbal = true;
+        }
+        if (FEAR_WORDS.includes(word)) {
+            flags.fear = true;
+        }
+    });
+
+    return flags;
+}
+
+/* =====================================================
+   CLASSIFICATION LOGIC (EXPERIENCE-BASED)
+===================================================== */
+function classify(flags) {
+    // ANY physical act = harassment
+    if (flags.physical) {
+        return "🚨 Harassment";
+    }
+
+    // Fear or verbal actions = potential harassment
+    if (flags.verbal || flags.fear) {
+        return "⚠ Potential Harassment";
+    }
+
+    return "✅ Safe Interaction";
+}
+
+/* =====================================================
+   RESPONSE SYSTEM
+===================================================== */
+function getResponse(category) {
+    if (category.includes("Harassment")) {
+        return {
+            actions: [
+                "Move to a safe and populated area immediately",
+                "Seek help from authorities or security personnel",
+                "Contact a trusted person",
+                "Document the incident when safe"
+            ],
+            calm: "You are not at fault. What happened is serious, and your safety comes first. Take slow breaths and focus on getting help."
+        };
+    }
+
+    if (category.includes("Potential")) {
+        return {
+            actions: [
+                "Trust your instincts and stay alert",
+                "Create distance from the person if possible",
+                "Stay near others or security",
+                "Seek help if the behavior continues or escalates"
+            ],
+            calm: "Feeling uncomfortable is valid. You are allowed to prioritize your safety and boundaries."
+        };
+    }
+
+    return {
+        actions: [
+            "No immediate threat detected",
+            "Remain aware of your surroundings"
+        ],
+        calm: "You are safe right now. Take a slow breath and ground yourself."
+    };
+}
+
+/* =====================================================
+   UI CONNECTION
+===================================================== */
+document.querySelector(".analyze-btn").addEventListener("click", () => {
+    const inputText = document.querySelector("textarea").value;
+
+    const tokens = preprocessInput(inputText);
+    const flags = analyzeTokens(tokens);
+    const category = classify(flags);
+    const response = getResponse(category);
+
+    document.querySelector(".classification").innerText = category;
+
+    const ul = document.querySelector(".right ul");
+    ul.innerHTML = "";
+
+    response.actions.forEach(action => {
+        const li = document.createElement("li");
+        li.textContent = action;
+        ul.appendChild(li);
+    });
+
+    const calm = document.createElement("p");
+    calm.style.marginTop = "12px";
+    calm.textContent = "💗 " + response.calm;
+    ul.appendChild(calm);
+});
+</script>
+
+
+</body>
+</html>
