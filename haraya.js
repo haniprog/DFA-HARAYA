@@ -202,6 +202,13 @@ document.addEventListener("DOMContentLoaded", () => {
     const classificationEl = document.querySelector(".classification");
     const actionList = document.querySelector(".right ul");
     const reportList = document.querySelector(".report-list");
+    const emergencyBtn = document.querySelector(".emergency-btn");
+    const emergencySection = document.querySelector(".emergency-section");
+
+    function setEmergencyVisibility(show) {
+        if (!emergencySection) return;
+        emergencySection.classList.toggle('hidden', !show);
+    }
 
     // Wire About button
     if (aboutBtn) {
@@ -335,9 +342,42 @@ document.addEventListener("DOMContentLoaded", () => {
     // Reset legal explanation panel
     reportList.innerHTML = "<li>No analysis yet.</li>";
 
+    setEmergencyVisibility(false);
+
     // Focus back on textarea
     textarea.focus();
 });
+
+    /* --- EMERGENCY BUTTON --- */
+    if (emergencyBtn) {
+        emergencyBtn.addEventListener("click", () => {
+            const confirmed = confirm(
+                "🚨 EMERGENCY CALL\n\n" +
+                "This will attempt to call emergency services.\n" +
+                "In the Philippines:\n" +
+                "• 911 - National Emergency Hotline\n" +
+                "• 8888 - PNP (Philippine National Police)\n" +
+                "• 117 - PNP Emergency Hotline\n\n" +
+                "Do you want to proceed?"
+            );
+
+            if (confirmed) {
+                try {
+                    window.location.href = "tel:911";
+                } catch (error) {
+                    alert(
+                        "📞 CALL EMERGENCY SERVICES NOW\n\n" +
+                        "Please manually dial:\n" +
+                        "• 911 (National Emergency)\n" +
+                        "• 8888 (PNP)\n" +
+                        "• 117 (PNP Emergency)\n\n" +
+                        "Stay safe and get to a secure location!"
+                    );
+                }
+                console.log("Emergency call initiated at:", new Date().toLocaleString());
+            }
+        });
+    }
 
     /* --- PROCESS INPUT FUNCTION --- */
     function processInput(text) {
@@ -347,6 +387,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const response = getResponse(category);
 
         classificationEl.innerText = category;
+        setEmergencyVisibility(category.startsWith("🚨"));
 
         actionList.innerHTML = "";
         response.actions.forEach(action => {

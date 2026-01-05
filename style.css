@@ -6,6 +6,8 @@ body {
     color: #7a2e44;
 }
 
+.hidden { display: none !important; }
+
 /* ================= PAGE HANDLING ================= */
 .page {
     display: none;
@@ -116,6 +118,51 @@ button:disabled {
 .clear-btn {
     background-color: #95a5a6; /* gray */
     color: white;
+}
+
+.emergency-btn {
+    background-color: #e74c3c; /* emergency red */
+    color: white;
+    font-weight: bold;
+    font-size: 16px;
+    padding: 12px 24px;
+    border: 2px solid #c0392b;
+    box-shadow: 0 4px 8px rgba(231, 76, 60, 0.3);
+    animation: pulse 2s infinite;
+}
+
+.emergency-btn:hover {
+    background-color: #c0392b;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(231, 76, 60, 0.4);
+}
+
+.emergency-section {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #fff;
+    border: 2px solid #e74c3c;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.emergency-note {
+    margin: 8px 0 0 0;
+    font-size: 12px;
+    color: #e74c3c;
+    font-weight: bold;
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 4px 8px rgba(231, 76, 60, 0.3);
+    }
+    50% {
+        box-shadow: 0 4px 8px rgba(231, 76, 60, 0.6), 0 0 0 8px rgba(231, 76, 60, 0.1);
+    }
+    100% {
+        box-shadow: 0 4px 8px rgba(231, 76, 60, 0.3);
+    }
 }
 
 /* ================= CONTENT ================= */
@@ -291,4 +338,26 @@ textarea {
 .explanation-box li {
     margin-bottom: 10px;
     font-size: 14px;
+}
+
+/* ================= MOBILE ================= */
+@media (max-width: 780px) {
+    .page { padding: 20px; }
+    .navbar { flex-direction: column; align-items: flex-start; gap: 12px; padding: 12px 20px; }
+    .logo-text h1 { font-size: 28px; }
+    .logo-text p { font-size: 12px; }
+
+    .content { flex-direction: column; gap: 20px; }
+    .left, .right { width: 100%; padding: 20px; }
+
+    textarea { width: 100%; height: 140px; }
+
+    .left button { width: 100%; margin-top: 8px; }
+    .left .speak-btn { margin-top: 12px; }
+
+    .emergency-section {
+        position: sticky;
+        bottom: 12px;
+        box-shadow: 0 10px 28px rgba(0,0,0,0.16);
+    }
 }
