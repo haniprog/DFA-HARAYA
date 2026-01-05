@@ -304,7 +304,7 @@ document.addEventListener("DOMContentLoaded", () => {
         recognition.start();
     });
 
-    /* --- CLEAR BUTTON --- */
+    /* --- CLEAR BUTTON --- 
     clearBtn.addEventListener("click", () => {
     textarea.value = "";
 
@@ -319,8 +319,25 @@ document.addEventListener("DOMContentLoaded", () => {
     reportList.innerHTML = "<li>No analysis yet.</li>";
 
     textarea.focus();
-});
+}); */
 
+    clearBtn.addEventListener("click", () => {
+    // Clear the textarea
+    textarea.value = "";
+
+    // Reset classification panel
+    classificationEl.textContent = "No analysis yet.";
+    classificationEl.className = "classification";
+
+    // Reset recommended actions panel
+    actionList.innerHTML = "<li>No recommendations yet.</li>";
+
+    // Reset legal explanation panel
+    reportList.innerHTML = "<li>No analysis yet.</li>";
+
+    // Focus back on textarea
+    textarea.focus();
+});
 
     /* --- PROCESS INPUT FUNCTION --- */
     function processInput(text) {
