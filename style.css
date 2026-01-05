@@ -263,3 +263,32 @@ textarea {
     margin-top: 12px;
     float: right;
 }
+
+/* EXPLANATION PANEL (BOTTOM) */
+.explanation-panel {
+    margin-top: 40px;
+    background-color: #fff3f6;
+    padding: 30px;
+    border-radius: 15px;
+}
+
+.explanation-panel h3 {
+    margin-top: 0;
+    font-family: 'Alata', sans-serif;
+}
+
+.explanation-box {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 12px;
+    border-left: 5px solid #c44d6d;
+}
+
+.explanation-box ul {
+    padding-left: 20px;
+}
+
+.explanation-box li {
+    margin-bottom: 10px;
+    font-size: 14px;
+}

@@ -1,5 +1,5 @@
 /* ===== CONSTANTS ===== */
-const NEGATIONS = ["not", "didnt", "didn't", "never", "no"];
+const NEGATIONS = ["not", "didnt", "didn't", "never", "no", "doesn't", "doesnt"];
 const PHYSICAL_ACTIONS = [
     "touch","touched","hit","hits","punch","punched","slap","slapped",
     "kick","kicked","push","pushed","pull","pulled","grab","grabbed",
@@ -7,8 +7,8 @@ const PHYSICAL_ACTIONS = [
     "hawakan","pahipo","hinipuan","sinapak","sinuntok"
 ];
 const VERBAL_ACTIONS = [
-    "follow","followed","stare","staring","stared","catcall","catcalled",
-    "whistle","whistled","approach","approached","comment","commented",
+    "follow","followed", "follows", "following", "stare","staring","stared","catcall","catcalled",
+    "whistle","whistled", "whistles", "approach", "approaches", "approached","comment","commented",
     "harass","harassed"
 ];
 const FEAR_WORDS = [
@@ -16,7 +16,83 @@ const FEAR_WORDS = [
     "nervous","panic","panicked"
 ];
 
+const LEGAL_KEYWORDS = [
+    {
+        keywords: ["hit", "hits", "slap", "slaps", "punch", "punched", "punches", "push", "pushed", "pushes", "kick", "hurt"],
+        category: "Harassment",
+        law: "RA 9262 (VAWC)",
+        reason: "Physical violence or force against a person constitutes harassment and abuse."
+    },
+    {
+        keywords: ["touch", "touched", "touching", "touches", "grab", "grabs", "grabbed", "hold", "holds", "held", "drag", "drags", "dragged"],
+        category: "Harassment",
+        law: "RA 11313 (Safe Spaces Act)",
+        reason: "Unwanted physical contact is explicitly prohibited in public and private spaces."
+    },
+    {
+        keywords: ["stare", "stares", "staring", "looked", "looks", "looking", "gaze", "gazed", "gazing"],
+        category: "Potential Harassment",
+        law: "RA 11313",
+        reason: "Persistent or unwanted staring can cause discomfort and intimidation."
+    },
+    {
+        keywords: ["follow", "following", "follows", "followed", "trailed"],
+        category: "Potential Harassment",
+        law: "RA 11313",
+        reason: "Being followed in public spaces may indicate threatening behavior."
+    },
+    {
+        keywords: ["uncomfortable", "scared", "afraid", "unsafe"],
+        category: "Potential Harassment",
+        law: "RA 11313",
+        reason: "Victim discomfort is a critical indicator of unsafe interaction."
+    }
+];
+
 /* ===== PREPROCESSOR ===== */
+
+function extractTriggers(tokens) {
+    const triggers = [];
+
+    tokens.forEach(token => {
+        LEGAL_KEYWORDS.forEach(entry => {
+            if (entry.keywords.includes(token)) {
+                triggers.push({
+                    word: token,
+                    category: entry.category,
+                    law: entry.law,
+                    reason: entry.reason
+                });
+            }
+        });
+    });
+
+    return triggers;
+}
+
+
+function renderExplanation(triggers) {
+    const reportList = document.querySelector(".report-list");
+    reportList.innerHTML = "";
+
+    if (triggers.length === 0) {
+        reportList.innerHTML = "<li>No legally significant indicators detected.</li>";
+        return;
+    }
+
+    triggers.forEach(t => {
+        const li = document.createElement("li");
+        li.innerHTML = `
+            <strong>Detected Word:</strong> "${t.word}"<br>
+            <strong>Classification:</strong> ${t.category}<br>
+            <strong>Legal Basis:</strong> ${t.law}<br>
+            <em>${t.reason}</em>
+        `;
+        reportList.appendChild(li);
+    });
+}
+
+
 // Helper: match tokens against action lists and handle simple inflections
 function tokenMatchesList(token, list) {
     return list.some(action => token === action || token.startsWith(action));
@@ -125,6 +201,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const textarea = document.querySelector("textarea");
     const classificationEl = document.querySelector(".classification");
     const actionList = document.querySelector(".right ul");
+    const reportList = document.querySelector(".report-list");
 
     // Wire About button
     if (aboutBtn) {
@@ -173,14 +250,23 @@ document.addEventListener("DOMContentLoaded", () => {
         analyzeBtn.addEventListener("click", () => {
             const text = textarea.value.trim();
             if (!text) {
-                console.log('Analyze clicked with empty input');
-                textarea.focus();
-                return;
+            textarea.focus();
+            return;
             }
 
-            console.log('Analyze clicked');
+    // Run DFA / main classification
             processInput(text);
+
+    // Tokenize input for explanation panel
+            const tokens = text.toLowerCase().match(/\b\w+\b/g) || [];
+
+    // Extract legally significant words
+            const triggers = extractTriggers(tokens);
+
+    // Render explanation panel (bottom)
+            renderExplanation(triggers);
         });
+
 
     } else {
         console.warn("Analyze button not found at DOMContentLoaded; adding delegated handler.");
@@ -220,10 +306,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
     /* --- CLEAR BUTTON --- */
     clearBtn.addEventListener("click", () => {
-        textarea.value = "";
-        classificationEl.innerText = "System Response will appear here";
-        actionList.innerHTML = "";
-    });
+    textarea.value = "";
+
+    classification.textContent = "No analysis yet.";
+    classification.className = "classification";
+
+    actionsList.innerHTML = "";
+    actionsList.innerHTML = "<li>No recommendations yet.</li>";
+
+    // CLEAR EXPLANATION PANEL
+    const reportList = document.querySelector(".report-list");
+    reportList.innerHTML = "<li>No analysis yet.</li>";
+
+    textarea.focus();
+});
+
 
     /* --- PROCESS INPUT FUNCTION --- */
     function processInput(text) {
