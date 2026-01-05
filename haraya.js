@@ -18,13 +18,13 @@ const FEAR_WORDS = [
 
 const LEGAL_KEYWORDS = [
     {
-        keywords: ["hit", "hits", "slap", "slaps", "punch", "punched", "punches", "push", "pushed", "pushes", "kick", "hurt"],
+        keywords: ["hit", "hits", "slap", "slaps", "punch", "punched", "punches", "push", "pushed", "pushes", "kick", "hurt", "hurts", "sinapak", "sapak", "suntok", "sinuntok"],
         category: "Harassment",
         law: "RA 9262 (VAWC)",
         reason: "Physical violence or force against a person constitutes harassment and abuse."
     },
     {
-        keywords: ["touch", "touched", "touching", "touches", "grab", "grabs", "grabbed", "hold", "holds", "held", "drag", "drags", "dragged"],
+        keywords: ["touch", "touched", "touching", "touches", "grab", "grabs", "grabbed", "hold", "holds", "held", "drag", "drags", "dragged", "hipo", "hinipuan", "hawak", "hinawakan"],
         category: "Harassment",
         law: "RA 11313 (Safe Spaces Act)",
         reason: "Unwanted physical contact is explicitly prohibited in public and private spaces."
